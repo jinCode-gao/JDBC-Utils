@@ -1,0 +1,59 @@
+package cn.itcast.jdbc;
+
+import cn.itcast.utils.JdbcUtils;
+
+import java.sql.*;
+import java.util.Scanner;
+
+public class jdbcdemo1 {
+    public static void main(String[] args) throws Exception {
+        //1.键盘录入
+        Scanner sc=new Scanner(System.in);
+        System.out.println("请输入用户名");
+        String user_name=sc.nextLine();
+        System.out.println("请输入user_id");
+        String user_id=sc.nextLine();
+        //2.调用方法
+        boolean flag=new jdbcdemo1().login(user_name,user_id);
+        //3.判断结果
+        if(flag)
+        {
+            //登陆成功
+            System.out.println("登录成功");
+        }else{
+            System.out.println("错误");
+        }
+    }
+
+    public boolean login(String user_name,String user_id)
+    {
+        if(user_id==null || user_name==null)
+            return false;
+        Connection conn=null;
+        Statement stmt=null;
+        ResultSet rs=null;
+        //1.获取连接
+        try{
+            conn= JdbcUtils.getConnection();
+            //2.定义sql
+            String sql="select *from t_order where user_id='"+user_id+"' and user_name='"+user_name+"'";
+            //3.获取执行sql对象
+            stmt=conn.createStatement();
+            //给？赋值
+//            pstmt.setString(1,user_id);
+//            pstmt.setString(2,user_name);
+            //4.执行查询，不需要传递sql
+            rs=stmt.executeQuery(sql);
+            //5.判断
+            return rs.next();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }finally {
+            //JdbcUtils.free(rs,stmt,conn);
+        }
+        return false;
+    }
+
+
+}
+
